@@ -120,8 +120,17 @@ module.exports = function Email(sails) {
             var smtpPool = require('nodemailer-smtp-pool');
             transport = nodemailer.createTransport(smtpPool({
               service: sails.config[self.configKey].service,
-              auth: sails.config[self.configKey].auth
+              auth: sails.config[self.configKey].auth,  
+              host: sails.config[self.configKey].host, 
+              secureConnection: sails.config[self.configKey].secure,
+              port: sails.config[self.configKey].port,
+              headers: sails.config[self.configKey].headers
             }));
+
+            if (!transport.service )
+              delete transport.service;
+            if (transport.auth && (!transport.auth.user && !transport.auth.pass ))
+              delete transport.auth;  //must not be sent when using Exchange relay
           }
 
           // Auto generate text
